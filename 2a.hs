@@ -11,7 +11,7 @@ main = do
   input <- getContents
   ( print
       . sum
-      . map (\(a, b) -> outcomeToInt (score (a, b)) + playToInt b)
+      . map (\xs -> outcomeToInt (score xs) + playToInt (snd xs))
       . mapMaybe (tuples . map toPlay . words)
       . lines
     )
