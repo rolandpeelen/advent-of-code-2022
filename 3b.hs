@@ -3,6 +3,7 @@
 import Data.Bifunctor
 import Data.Char
 import Data.List
+import Data.List.Split
 import qualified Data.Set as S
 import Lib
 import Prelude
@@ -13,8 +14,8 @@ main = do
 
   ( print
       . sum
-      . concatMap (S.toList . intersectMany . map (S.fromList . toInts))
-      . groupN 3
+      . concatMap (S.toList . intersections . map (S.fromList . toInts))
+      . chunksOf 3
       . lines
     )
     input
@@ -28,12 +29,8 @@ toInt x
   | isLower x = ord x - 96
   | otherwise = ord x - 38
 
-groupN :: Int -> [a] -> [[a]]
-groupN _ [] = []
-groupN n l = take n l : groupN n (drop n l)
-
-intersectMany :: (Ord a) => [S.Set a] -> S.Set a
-intersectMany [] = S.empty
-intersectMany [s1] = s1
-intersectMany [s1, s2] = S.intersection s1 s2
-intersectMany (s1 : s2 : ss) = intersectMany (S.intersection s1 s2 : ss)
+intersections :: (Ord a) => [S.Set a] -> S.Set a
+intersections [] = S.empty
+intersections [s1] = s1
+intersections [s1, s2] = S.intersection s1 s2
+intersections (s1 : s2 : ss) = intersections (S.intersection s1 s2 : ss)
