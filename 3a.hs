@@ -3,7 +3,7 @@
 import Data.Bifunctor
 import Data.Char
 import Data.List
-import qualified Data.Map as M
+import qualified Data.Set as S
 import Lib
 import Prelude
 
@@ -13,10 +13,9 @@ main = do
   ( print
       . sum
       . concatMap
-        ( map fst
-            . M.toList
-            . uncurry M.intersection
-            . bimap countElems countElems
+        ( S.toList
+            . uncurry S.intersection
+            . bimap S.fromList S.fromList
             . splitMiddle
             . map toInt
         )
@@ -35,6 +34,3 @@ splitMiddle xs = splitAt s xs
   where
     l = length xs
     s = if even l then l `div` 2 else (l `div` 2) + 1
-
-countElems :: (Ord a) => [a] -> M.Map a Int
-countElems = M.fromListWith (+) . flip zip (repeat 1)

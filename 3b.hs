@@ -3,27 +3,17 @@
 import Data.Bifunctor
 import Data.Char
 import Data.List
-import qualified Data.Map as M
+import qualified Data.Set as S
 import Lib
 import Prelude
 
--- sum
--- concatMap
---( map fst
--- M.toList
--- intersectMany
--- map countElems
--- map toInt
---)
---
 main :: IO ()
 main = do
   input <- getContents
 
   ( print
       . sum
-      . map fst
-      . concatMap (M.toList . intersectMany . map (countElems . toInts))
+      . concatMap (S.toList . intersectMany . map (S.fromList . toInts))
       . groupN 3
       . lines
     )
@@ -38,15 +28,12 @@ toInt x
   | isLower x = ord x - 96
   | otherwise = ord x - 38
 
-countElems :: (Ord a) => [a] -> M.Map a Int
-countElems = M.fromListWith (+) . flip zip (repeat 1)
-
 groupN :: Int -> [a] -> [[a]]
 groupN _ [] = []
 groupN n l = take n l : groupN n (drop n l)
 
-intersectMany :: (Ord a) => [M.Map a b] -> M.Map a b
-intersectMany [] = M.empty
-intersectMany [m1] = m1
-intersectMany [m1, m2] = M.intersection m1 m2
-intersectMany (m1 : m2 : ms) = intersectMany (M.intersection m1 m2 : ms)
+intersectMany :: (Ord a) => [S.Set a] -> S.Set a
+intersectMany [] = S.empty
+intersectMany [s1] = s1
+intersectMany [s1, s2] = S.intersection s1 s2
+intersectMany (s1 : s2 : ss) = intersectMany (S.intersection s1 s2 : ss)
